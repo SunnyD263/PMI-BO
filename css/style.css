@@ -1,0 +1,154 @@
+nav ul {
+  max-width: 100%;
+  list-style: none;
+  padding: 1px;
+  border: 1px solid #ccc;
+  }
+  
+  nav ul li 
+  {   
+  display: inline-block;
+  position: relative;
+  margin-right: 50px;
+  font-size: 20px;
+  font-weight: bold
+  }
+  
+  nav ul li a {
+    display: block;
+    padding: 20px;
+    color: #000000;
+    text-decoration: none;
+  }
+  
+  nav ul li ul {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #000000;
+  }
+  
+  nav ul li:hover > ul {
+    display: block;
+  }
+  
+  nav ul li ul li {
+    display: block;
+    width: 100%;
+    font-size: 15px;
+    font-weight: bold
+  }
+  
+  nav ul li ul li a {
+    display: block;
+    padding: 10px;
+    color: #a7a6a6;
+    text-decoration: none;
+  }
+  
+  nav ul li ul li:hover {
+    background-color: #707070;
+  }
+
+  .responsive {
+    max-width: 100%; 
+    height: auto; 
+    background-size: cover; 
+    background-position: center;
+  }
+  
+  @media (max-width: 768px) {
+    /* Pro rozlišení 768px a větší */
+    .responsive{
+      max-width: 30%;
+      background-size: cover; /* nebo contain, podle požadavků */
+      background-position: center;
+    }
+  }
+  
+  @media (max-width: 1024px) {
+    /* Pro rozlišení 1024px a větší */
+    .responsive{
+      max-width: 50%;
+
+      background-size: cover; /* nebo contain, podle požadavků */
+      background-position: center;
+    }
+  }
+  
+fieldset {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+fieldset legend {
+  display: inline-block;
+  font-size: 20px; 
+  font-weight: bold;
+}
+
+fieldset label {
+  width: 150px;
+  font-size: 18px; 
+  display: inline-block;
+}
+
+fieldset input {
+  width: 200px;
+  font-size: 16px; 
+}
+
+select{  
+  font-size: 18px; 
+  display: inline-block;
+  width: 160px;
+}
+
+.ErrorMsg{
+  font-size: 25px;
+  color: #d61717; 
+}
+
+.DoneMsg
+{
+  font-size: 25px;
+  color: #18fc03; 
+}
+
+Table{
+  max-width: 100%;
+}
+Table td{
+ min-width:20px; 
+}
+
+.EAN_form_style{
+  max-width: 50%;
+  height: 50px;
+  max-height: 100%;
+}
+
+.EAN_form_style fieldset {
+  height: 130px; 
+  border: 1px solid #ccc; 
+}
+
+.Buttons {
+  display: flex;
+  justify-content: center;
+  max-width: 30%;
+  }
+
+  .Buttons table {
+    width: 100%;
+  }
+
+  .Buttons td {
+    text-align: center;
+  }
+
+.Button {
+  font-weight: bold;
+  font-size: 18px; 
+}
