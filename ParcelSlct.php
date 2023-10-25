@@ -11,7 +11,9 @@ private $Input;
         $Input = $this->Input;
         switch(true):  
             case (is_numeric ($Input) and strlen(strval($Input)) == 27);
-                return array(substr(strval($Input),7,14),"NUM");    
+                return array(substr(strval($Input),7,14),"NUM");
+            case (is_numeric ($Input) and strlen(strval($Input)) == 12);
+                return array(substr(strval($Input),0,11),"NUM");
             case is_numeric($Input); 
                 return array($Input,"NUM");    
             break;
@@ -24,6 +26,10 @@ private $Input;
                 elseif (substr($Input,0,1) == "Z" and strlen($Input)==11)
                 {
                 return array(substr($Input,1,10),"NUM");    
+                }
+                elseif(strlen($Input) == 17 and substr(($Input),11,1) == "-" )
+                {
+                return array(substr(strval($Input),0,11),"NUM");              
                 }
                 else
                 {
