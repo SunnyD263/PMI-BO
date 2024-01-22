@@ -1,4 +1,4 @@
-    <fieldset>
+<fieldset>
         <legend>Data zásilky: </legend><br>
         <label for='Reference' class='label-TradeIN'>Reference:</label>
         <input type='text' id='Reference' name='Reference' value="<?php echo $_SESSION['Reference']; ?>" disabled><br><br>
@@ -26,7 +26,7 @@
         <label for='CdfCharger' class='label-TradeIN'>Codentify charger: </label>
         <input type='text' id='CdfCharger' name='CdfCharger' onchange="FieldMaster(this)" value="<?php echo $_SESSION['CdfCharger']; ?>">
     </fieldset><br>
-
+    
     <fieldset class = 'Buttons'>
         <legend>Volby: </legend>
         <Table>

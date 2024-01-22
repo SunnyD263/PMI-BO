@@ -4,17 +4,18 @@
                     <li>
                         <a href="#">Prodejny</a>
                         <ul>
-                            <li><a href="#">Příjem prodejny</a></li>
+                            <li><a href="ShopRec.php?Open=">Příjem prodejny</a></li>
                             <li><a href="#">Nahrát prodejny</a></li>
                         </ul>
                     </li>
                     <li>
                         <a href="#">Vrácené balíky</a>
                         <ul>
-                            <li><a href="#">Vrácené balíky</a></li>
-                            <li><a href="#">Balíky mimo systém</a></li>
-                            <li><a href="#">Nedoručené balíky-zařízení</a></li>
-                            <li><a href="TradeIn.php">Trade IN</a></li>
+                            <li><a href="ReturnParcel.php?Open=">Vrácené balíky</a></li>
+                            <li><a href="UnsysParcel.php?Open=">Balíky mimo systém</a></li>
+                            <li><a href="NonDelivery.php?Open=">Nedoručené balíky-zařízení</a></li>
+                            <li><a href="TradeIn.php">Trade IN - ECOM</a></li>
+                            <li><a href="TradeIn_D.php">Trade IN - Shop</a></li>
                             <li><a href="SWAP.php">SWAP</a></li>
                         </ul>
                     </li>

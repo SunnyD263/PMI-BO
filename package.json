@@ -1,0 +1,11 @@
+{
+  "name": "pmi-non-delivery",
+  "version": "1.0.0",
+  "description": "PMI_TOOL",
+  "main": "ShopRec.mjs",
+  "node-main": "ShopRec.mjs",
+  "type": "module",
+  "author": "Jan Sonbol",
+  "license": "ISC"
+
+}

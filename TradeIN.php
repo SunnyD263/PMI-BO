@@ -7,8 +7,10 @@
     <meta name="author" content="Jan Sonbol" />
     <meta name="description" content="Příjem Trade-IN" />
       <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <script src="https://code.jquery.com/jquery-3.6.4.js"
-        integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous">
+    <script
+    src="https://code.jquery.com/jquery-3.7.1.slim.js"
+    integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc="
+    crossorigin="anonymous">
     </script>
 </head>
 
@@ -16,13 +18,15 @@
     <header>
         <h1>PMI BO Tool</h1>
         <?php require 'navigation.php'; ?>
+
+
     </header>
     <br>
     <div Id="table" class="responsive">
 <?php
 session_start();
-require 'SQLconn.php';
-require 'ParcelSlct.php'; 
+require 'SQLconn.php'; 
+require 'ProjectFunc.php';
 If ($_SERVER["REQUEST_METHOD"] == "GET")
 {
     if (isset($_GET["Input"])) 
@@ -40,7 +44,6 @@ If ($_SERVER["REQUEST_METHOD"] == "GET")
         TRDIN_main();
         die;    
         }
-
     }    
     elseif(isset($_GET["Save"]))
     {   if (!isset($Connection)) 
@@ -62,8 +65,8 @@ If ($_SERVER["REQUEST_METHOD"] == "GET")
 function GetPNorRef($input) {
     $Input = trim($input);
     $Result = new InputValue($Input);
-    $PN = $Result->DPD()[0];
-    $NumOrRef = $Result->DPD()[1];
+    $PN = $Result->ParcelNumber()[0];
+    $NumOrRef = $Result->ParcelNumber()[1];
     if ($NumOrRef == "NUM") 
     {   
         if (!isset($Connection)) 

@@ -6,10 +6,10 @@
         <meta name="author" content="Jan Sonbol" />
         <meta name="description" content="Informace o PMI zásilkách" />
          <link rel="stylesheet" type="text/css" href="css/style.css" />
-        <script
-            src="https://code.jquery.com/jquery-3.6.4.js"
-            integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E="
-            crossorigin="anonymous">           
+         <script
+            src="https://code.jquery.com/jquery-3.7.1.slim.js"
+            integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc="
+            crossorigin="anonymous">
         </script>
     </head>
     <body>
@@ -19,8 +19,8 @@
         </header>
 <div class='ScanParcel'>
     <h1><b><strong>= Balík info =</strong></b></h1>
-    <form  method='get' id='parcel_search_form'>
-        <label for='name' id='Inplbl'>Naskenujte číslo balíku:</label><br>
+    <form  method='get' class='InputPN'>
+        <label for='Input' id='Inplbl'>Naskenujte číslo balíku:</label><br>
         <input type='text' id='Input' name='Input' autofocus><br><br>
         <input type='submit' value='Potvrdit'>
     </form>
@@ -28,32 +28,38 @@
 <br>
 
 <?php
-require 'ParcelSlct.php'; 
+require 'ProjectFunc.php'; 
 If ($_SERVER["REQUEST_METHOD"] == "GET") { 
     if (isset($_GET["Input"])) {    
         $Input = $_GET["Input"];
         $Result = new InputValue(trim($Input));
-        $PN = $Result->DPD()[0];
-        $NumOrRef = $Result->DPD()[1];
+        $PN = $Result->ParcelNumber()[0];
+        $NumOrRef = $Result->ParcelNumber()[1];
         require 'SQLconn.php';
         if (!isset($Connection)){$Connection = new PDOConnect("DPD_DB");}
         if ($NumOrRef == "NUM")
-        {
-        $SQL=  "SELECT * FROM Parcel_view WHERE ([PARCELNO] = :parcelno) or ([REFERENCE] = :reference) ORDER BY EVENT_DATE_TIME DESC";
-        $params = array(':parcelno' => $PN, ':reference' => strval($PN));
-        $stmt = $Connection->select($SQL, $params);
-        }
+            {
+            $SQL=  "SELECT * FROM Parcel_view WHERE ([PARCELNO] = :parcelno) or ([REFERENCE] = :reference) ORDER BY EVENT_DATE_TIME DESC";
+            $params = array(':parcelno' => $PN, ':reference' => strval($PN));
+            $stmt = $Connection->select($SQL, $params);
+            }
         elseif($NumOrRef == "Pal")
-        {
-            $SQL=  "SELECT * FROM Parcel_view WHERE ([REFERENCE] = :reference) ORDER BY EVENT_DATE_TIME DESC";
-            $params = array(':reference' => $PN);
-            $stmt = $Connection->select($SQL, $params);    
-        }
+            {
+                $SQL=  "SELECT * FROM Parcel_view WHERE ([REFERENCE] = :reference) ORDER BY EVENT_DATE_TIME DESC";
+                $params = array(':reference' => $PN);
+                $stmt = $Connection->select($SQL, $params);    
+            }
+        elseif($NumOrRef == "Text")
+            {
+                $SQL=  "SELECT * FROM Parcel_view WHERE ([REFERENCE] = :reference) ORDER BY EVENT_DATE_TIME DESC";
+                $params = array(':reference' => $PN);
+                $stmt = $Connection->select($SQL, $params);    
+            }
         else
-        {
-            echo '<span class="ErrorMsg">Neznámý formát čísla.</span>';
-            die;
-        }
+            {
+                echo '<span class="ErrorMsg">Neznámý formát čísla.</span>';
+                die;
+            }
         $rows = $stmt['rows'];
         $count = $stmt['count'];
         
@@ -73,43 +79,11 @@ If ($_SERVER["REQUEST_METHOD"] == "GET") {
                 echo '<td>' . $value . '</td>';
             }
             echo '</tr>';
-        }
-        
+        }        
         echo '</table>';
-
     }
-    
 }   
 ?>
-
-<!-- <script>
-    $(document).ready(function() {
-        $('#parcel_search_form').submit(function(event) {
-            // zastavit defaultní chování formuláře
-            event.preventDefault();
-            
-            // získat hodnotu z inputu
-            var inputValue = $('#Input').val();
-            
-            // odeslat AJAX požadavek na server
-            $.ajax({
-                type: 'GET',
-                url: 'parcelslct.php',
-                data: { Input: inputValue },
-                success: function(data) {
-                    // vložit výsledek do elementu s id "result"
-                    $('#Input').val("").focus();
-                    $('#result').html(data);
-                },
-                error: function() {
-                    alert('Chyba při získávání dat.');
-                }
-            });
-        });
-    });
-</script> -->
-
-
 </body>
 
 
