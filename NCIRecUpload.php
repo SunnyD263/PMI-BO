@@ -20,40 +20,53 @@
 <?php
 require 'vendor/autoload.php';
 use PhpOffice\PhpSpreadsheet\IOFactory;
-
+/******************************************************************************************************************************************************************************/
 session_start();
 require 'SQLconn.php';
 if(isset($_POST['submit']))
     {
     $uploadedFile = $_FILES['excel_file']['tmp_name'];
-
-    $spreadsheet = IOFactory::load($uploadedFile);
-    $worksheet = $spreadsheet->getActiveSheet();
-
-    $highestRow = $worksheet->getHighestRow();
-    $highestColumn = $worksheet->getHighestColumn();
-    $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
-
-    $data = [];
-    for ($row = 2; $row <= $highestRow; ++$row) {
-        for ($col = 1; $col <= $highestColumnIndex; ++$col) {
-            $data[$row][$col] = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
-        }
-    }
-    if ($row > 2)
+    if ($uploadedFile !== "")
         {
-        if (!isset($Connection)) {$Connection = new PDOConnect('DPD_DB');}
-        $SQL = 'DELETE FROM Shop_NCI';
-        $stmt = $Connection->execute($SQL);
-        $Records = $data;   
-        foreach($Records as $ShopRec)
-            {
-            $data = array('Shop' => $ShopRec[1], 'ProjectID' => $ShopRec[2]);
-            $Connection->insert("Shop_NCI", $data);
+            $spreadsheet = IOFactory::load($uploadedFile);
+            $worksheet = $spreadsheet->getActiveSheet();
+
+            $highestRow = $worksheet->getHighestRow();
+            $highestColumn = $worksheet->getHighestColumn();
+            $highestColumnIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString($highestColumn);
+
+            $data = [];
+            for ($row = 2; $row <= $highestRow; ++$row) {
+                for ($col = 1; $col <= $highestColumnIndex; ++$col) {
+                    $data[$row][$col] = $worksheet->getCellByColumnAndRow($col, $row)->getValue();
+                }
             }
+            if ($row > 2)
+                {
+                if (!isset($Connection)) {$Connection = new PDOConnect('DPD_DB');}
+                $SQL = 'DELETE FROM Shop_NCI';
+                $stmt = $Connection->execute($SQL);
+                $Records = $data;   
+                foreach($Records as $ShopRec)
+                    {
+                    $data = array('Shop' => $ShopRec[1], 'ProjectID' => $ShopRec[2]);
+                    $Connection->insert("Shop_NCI", $data);
+                    }
+                $Records = $row - 1;
+                echo '<span class="DoneMsg">'. $Records . ' záznamů bylo nahráno</span>';
+                }
+
+            else
+                {
+                echo '<span class="ErrorMsg">Soubor je prázdný nebo ve špatném formátu.</span>';
+                }
+        }
+    else
+        {
+        echo '<span class="ErrorMsg">Nevybrali jste žádný soubor k nahrání.</span>';
         }
     }
-
+/******************************************************************************************************************************************************************************/    
 echo "<h2>Vyberte soubor s VO k načtení:</h2>";
 echo "<form action='NCIRecUpload.php' method='post' enctype='multipart/form-data'>";
 echo "<input type='file' name='excel_file' class='Button' accept='.xlsx'><br><br>";

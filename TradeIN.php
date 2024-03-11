@@ -2,13 +2,15 @@
 <html lang="cs">
 
 <head>
-    <title>Příjem Trade-IN</title>
+    <title>Příjem TRADEIN</title>
     <meta charset="UTF-8">
     <meta name="author" content="Jan Sonbol" />
-    <meta name="description" content="Příjem Trade-IN" />
-      <link rel="stylesheet" type="text/css" href="css/style.css" />
-    <script src="https://code.jquery.com/jquery-3.6.4.js"
-        integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous">
+    <meta name="description" content="Příjem TRADEIN" />
+    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <script
+    src="https://code.jquery.com/jquery-3.7.1.slim.js"
+    integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc="
+    crossorigin="anonymous">
     </script>
 </head>
 
@@ -18,91 +20,91 @@
         <?php require 'navigation.php'; ?>
     </header>
     <br>
-    <div Id="table" class="responsive">
 <?php
 session_start();
 require 'SQLconn.php';
-require 'ParcelSlct.php'; 
+require 'ProjectFunc.php'; 
 If ($_SERVER["REQUEST_METHOD"] == "GET")
-{
+{ 
     if (isset($_GET["Input"])) 
-    {  
-    GetPNorRef($_GET["Input"]);  
-    }
-    elseif (isset($_GET["Menu"])) 
-    {
-        if($_GET["Menu"]=='no')
-        {
-        GetPNorRef($_SESSION['PARCELNO']);  
+        {  
+        GetPNorRef($_GET["Input"]);  
         }
-        elseif($_GET["Menu"]=='yes')
-        {        
-        TRDIN_main();
-        die;    
-        }
-
-    }    
-    elseif(isset($_GET["Save"]))
-    {   if (!isset($Connection)) 
-        {$Connection = new PDOConnect("DPD_DB");}     
-        $SQL=  "UPDATE [dbo].[TRADE_IN] SET [STATUS]= :STATUS,[CdfCharger]= :CdfCharger,[CdfHolder]= :CdfHolder,[Scantime]= :Scantime  where [REFERENCE] = :REFERENCE";
-        $params = array('REFERENCE' => $_SESSION['Reference'],'STATUS' => $_GET['Status'], 'CdfCharger' => strtoupper($_GET['CdfCharger']), 'CdfHolder' => strtoupper($_GET['CdfHolder']),'Scantime' => date('Y-m-d H:i:s'));
-        $upd = $Connection->update($SQL,$params);
-        echo '<span class="DoneMsg">Záznam byl uložen na server.</span>';    
-        TRDIN_main();
-        die;  
-    }        
     else
-    {
-        TRDIN_main();
-        die;    
-    }
+        {
+        if(isset($_SESSION['SumLocation'])){unset($_SESSION['SumLocation']);}
+        if(isset($_SESSION['TRADEIN_Dvc_sum_View'])){unset($_SESSION['TRADEIN_Dvc_sum_View']);}
+        TRADEIN_main();
+        }
 }   
 
 function GetPNorRef($input) {
-    $Input = trim($input);
+    $Input = strtoupper(trim($input));
     $Result = new InputValue($Input);
-    $PN = $Result->DPD()[0];
-    $NumOrRef = $Result->DPD()[1];
-    if ($NumOrRef == "NUM") 
+    $PN = $Result->ParcelNumber()[0];
+    $NumOrRef = $Result->ParcelNumber()[1];
+    if (!isset($Connection)) 
+    {$Connection = new PDOConnect("DPD_DB");}
+    if ($NumOrRef == "Pal") 
     {   
-        if (!isset($Connection)) 
-        {$Connection = new PDOConnect("DPD_DB");}
-        $SQL = "SELECT [Reference],[RCVDate],[PARCELNO],[PARCELNO_ST],[STATUS],[CdfCharger],[CdfHolder] FROM [TradeIN_View] WHERE ([PARCELNO] = :parcelno) OR ([PARCELNO_ST] = :parcelno_st)";
-        $params = array(':parcelno' => $PN, ':parcelno_st' => $PN);
+        $SQL = "SELECT [Reference],[PARCELNO] FROM [TRADEIN_Dvc_View] WHERE ([REFERENCE] = :reference)";
+        $params = array(':reference' => $PN);
         $stmt = $Connection->select($SQL, $params);
         $count = $stmt['count'];
         $rows =  $stmt['rows'];
-        if ($count === false || $count === null || $count === 0) {
+        if ($count === false || $count === null || $count === 0)
+        {
             echo '<span class="ErrorMsg">Databáze neobsahuje toto číslo palety.</span>';
-            TRDIN_main();
+            TRADEIN_main();
             die;
-        } else {
+        } 
+        else 
+        {
+            if (!isset($_SESSION)) {session_start();}
+            $row = $rows[0];
+            $_SESSION['Reference'] = $row['Reference'];
+            if (isset($_SESSION["TRADEIN_ORDITEM"])){unset($_SESSION["TRADEIN_ORDITEM"]);}
+            if (isset($_SESSION["TRADEIN_SCNITEM"])){unset($_SESSION["TRADEIN_SCNITEM"]);}
+            header("Location: TRADEIN_form.php?Open=");
+        }
+    } 
+    elseif ($NumOrRef == "NUM") 
+    {
+        $SQL = "SELECT [Reference],[PARCELNO] FROM [TRADEIN_Dvc_View] WHERE ([PARCELNO] = :parcelno) or ([REFERENCE] = :reference) ";
+        $params = array(':parcelno' => $PN, ':reference' => $PN);
+        $stmt = $Connection->select($SQL, $params);
+        $count = $stmt['count'];
+        $rows =  $stmt['rows'];
+        if ($count === false || $count === null || $count === 0)
+        {
+            echo '<span class="ErrorMsg">Databáze neobsahuje toto číslo palety.</span>';
+            TRADEIN_main();
+            die;
+        } 
+        else 
+        {
             if (!isset($_SESSION)) {session_start();}
             $row = $rows[0];
             $_SESSION['Reference'] = $row['Reference'];
             $_SESSION['PARCELNO'] = $row['PARCELNO'];
-            $_SESSION['PARCELNO_ST'] = $row['PARCELNO_ST'];
-            $_SESSION['RCVDate'] = $row['RCVDate'];
-            $_SESSION['Status'] = $row['STATUS'];
-            $_SESSION['CdfCharger'] = $row['CdfCharger'];
-            $_SESSION['CdfHolder'] = $row['CdfHolder'];
-            require "TradeIN_form.php";
+            if (isset($_SESSION["TRADEIN_ORDITEM"])){unset($_SESSION["TRADEIN_ORDITEM"]);}
+            if (isset($_SESSION["TRADEIN_SCNITEM"])){unset($_SESSION["TRADEIN_SCNITEM"]);}
+            header("Location: TRADEIN_form.php?Open=");
         }
-    } 
-    else 
-    { 
-        TRDIN_main();
+    }
+    else
+    {   echo '<span class="ErrorMsg">Neznámý formát čísla.</span>';
+        TRADEIN_main();
         die;
     }
 }
 
-function TRDIN_main() 
+function TRADEIN_main() 
 {
 echo "<div class='ScanParcel'>";
-echo "<h1><b><strong>= Příjem TradeIN =</strong></b></h1>";
-echo "<form  method='get' id='parcel_search_form'>";
-echo "<label for='name' id='Inplbl'>Naskenujte číslo balíku:</label><br>";
+echo "<h1><b><strong>= Příjem TRADEIN =</strong></b></h1>";
+echo "<form  method='get' class='InputPN'>";
+echo "<label for='Input' id='Inplbl'>Naskenujte číslo balíku:</label><br>";
 echo "<input type='text' id='Input' name='Input' autofocus><br><br>";
 echo "<input type='submit' value='Potvrdit'>";
 echo "</form>";
@@ -110,7 +112,7 @@ echo "</div>";
 echo "<br>";
 if (!isset($Connection)) 
     {$Connection = new PDOConnect("DPD_DB");}
-    $SQL = "SELECT [REFERENCE],[RCVDate],[PARCELNO],[PARCELNO_ST],[Customer],[Street],[City] FROM [dbo].[TradeIN_View] ORDER BY RCVDate,Reference";
+    $SQL = "SELECT [REFERENCE],[PARCELNO],[Customer],[Street],[City],[EVENT_DATE_TIME],[Sum] FROM [DPD_DB].[dbo].[TRADEIN_Dvc_View] where Sum < 0 and EVENT_DATE_TIME >  DATEADD(Day,-14,GETDATE()) or SUM IS NULL ORDER by EVENT_DATE_TIME";
     $stmt = $Connection->select($SQL);
     
     $rows = $stmt['rows'];
@@ -118,7 +120,7 @@ if (!isset($Connection))
     
     echo "Počet záznamů: " . $count . "<br>";
     
-    $columnNames = ['Reference', 'Datum příjmu', 'Příchozí balík', 'Odchozí balík', 'Zákazník', 'Ulice', 'Město'];
+    $columnNames = ['Reference','Číslo balík','Zákazník', 'Ulice', 'Město','Datum příjmu','Info'];
     echo '<table border="2" cellspacing="1" cellpadding="5">';
     echo '<tr>';
     for ($i = 0; $i < count($columnNames); $i++) {
@@ -136,53 +138,5 @@ if (!isset($Connection))
     
     echo '</table>';
 }
-
 ?>
-<script>
-
-  document.addEventListener("keydown", function(event) {
-    if (event.key === "Enter") {
-      event.preventDefault(); 
-      var input = event.target;
-      var index = input.tabIndex;
-      var nextInput = document.querySelector('[tabindex="' + (index + 1) + '"]');
-      if (nextInput) {
-        nextInput.focus();
-      }
-    }
-  });
-
-  function submitForm() {
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", "TradeIN.php?Save=", true);
-  xhr.send();
-
-  document.forms[0].submit();
-}
-
-
-    function FieldMaster(field) {
-        var Status = document.getElementById("Status");
-        var CdfHolder = document.getElementById("CdfHolder");
-        var CdfCharger = document.getElementById("CdfCharger");
-
-        if (field.id === "Status") {
-                CdfHolder.focus();
-        } else if (field.id === "CdfHolder") {
-                CdfCharger.focus();
-        } else if (field.id === "CdfCharger") {
-                Status.focus();
-        }
-    }
-
-    function Confirmation() {
-        if (confirm("Neuložená data se ztratí. Chcete pokračovat?")) {
-            window.location.href = "TradeIn.php?Menu=yes";
-
-        } else {
-            window.location.href = "TradeIn.php?Menu=no";
-        }
-    }
-    </script>
-    </div>
 </body>

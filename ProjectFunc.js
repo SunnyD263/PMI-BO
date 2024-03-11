@@ -35,7 +35,7 @@
                 const processResult = await this.processSQLcmd(this.BarCode);
                 console.log(processResult);
                 
-                resolve([this.Material, this.Product, this.BarCode, this.Codentify, this.Unit, this.Quantity, this.Type, this.nonDvc]);
+                resolve([this.Material, this.Product, this.EAN, this.Codentify, this.Unit, this.Quantity, this.Type, this.nonDvc]);
             } catch (error) {
                 console.error(error);
                 reject(error); 
@@ -43,18 +43,32 @@
         });
     }
 
-
+/******************************************************************************************************************************************************************************/
 async processSQLcmd(BarCode) 
     {
     return new Promise(async (resolve, reject) => {
             const types = ["_PK", "_CT", "_BX"];
             for (const type of types) {
-                try {
-                    const result = await SQLcmd('ProjectAPI.php', `SELECT * FROM EAN WHERE LastEAN = 1 AND EAN${type} = '${BarCode}'`);
+                try { 
+                    var LastEAN
+                    switch (type)
+                    {
+                    case "_PK":  
+                    LastEAN = "LastEAN"
+                    break
+                    case "_CT":  
+                    LastEAN  = "LastEAN_CT"
+                    break         
+                    case "_BX":  
+                    LastEAN  = "LastEAN_BX"                          
+                    break
+                    }
+                    const result = await SQLcmd('ProjectAPI.php', `SELECT * FROM EAN WHERE ${LastEAN} = 1 AND EAN${type} = '${BarCode}'`);
                     if (result && result.count > 0) {
                         this.Product = result.rows[0].MAKTX;
                         this.Material = result.rows[0].MATNR;
                         this.convert = result.rows[0].MATNR.slice(0, 2);
+                        this.EAN = result.rows[0].EAN_PK;
                         switch (type)
                             {
                             case "_PK":  
@@ -110,10 +124,11 @@ async processSQLcmd(BarCode)
                 this.Quantity = 1;
                 break;
         }
+        this.Unit = "Pack"
 
     }
 }
-
+/******************************************************************************************************************************************************************************/
  class InputValue {
     constructor(Input) {
         this.Input = Input;
@@ -144,6 +159,7 @@ async processSQLcmd(BarCode)
     }
 }
 
+/******************************************************************************************************************************************************************************/
 function SQLcmd(SQL_Script, SQLcmd) {
     return new Promise(function(resolve, reject) {
         $.ajax({
@@ -162,6 +178,7 @@ function SQLcmd(SQL_Script, SQLcmd) {
     });
 }
 
+/******************************************************************************************************************************************************************************/
  function NowDate()
 {
     var currentDateTime = new Date();

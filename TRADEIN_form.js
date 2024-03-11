@@ -99,6 +99,7 @@ fetch('TRADEIN_form.php', {
     });
 }
 
+/******************************************************************************************************************************************************************************/
 function ScanArray (OrderItem,ScanItem,Reference,Codentify,EAN,ID)
 {
     if(OrderItem !== '')
@@ -136,6 +137,7 @@ function ScanArray (OrderItem,ScanItem,Reference,Codentify,EAN,ID)
     return ScanItem;
 }
 
+/******************************************************************************************************************************************************************************/
 function Confirmation(Menu) 
 {
 

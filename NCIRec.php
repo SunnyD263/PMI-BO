@@ -89,7 +89,7 @@ function NCIRec()
     echo        "</div><br>";
     echo        "<div>";
     echo        "<label for='counter'>Počet záznamů:</label>";
-    echo        "<input type='text' id='counter' value = 0 style='width: 20px; text-align: center' disabled>";
+    echo        "<input type='text' id='counter' value = 0 style='width: 40px; text-align: center' disabled>";
     echo        "</div><br>";   
     echo        "<table id='BodyField' class='AddField'></table>";
    

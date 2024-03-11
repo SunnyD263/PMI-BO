@@ -23,6 +23,8 @@
 session_start();
 echo "<h2> Příjem z prodejen</h2>";
 require 'SQLconn.php';
+
+/******************************************************************************************************************************************************************************/
 if ($_SERVER['REQUEST_METHOD'] == 'POST') 
 {    
 $json_data = file_get_contents('php://input');
@@ -42,7 +44,8 @@ if ($data["Shop"] !== null and $data["ShopRec"] !== null)
     }
 }
 
-If ($_SERVER["REQUEST_METHOD"] == "GET")
+/******************************************************************************************************************************************************************************/
+if ($_SERVER["REQUEST_METHOD"] == "GET")
 { 
 //Open forms
 If(isset($_GET["Open"]))
@@ -53,6 +56,7 @@ If(isset($_GET["Open"]))
 
 }
 
+/******************************************************************************************************************************************************************************/
 function ShopRec()
     {
     echo        "<div class='header'>";
@@ -90,12 +94,13 @@ function ShopRec()
     echo        "</div><br>";
     echo        "<div>";
     echo        "<label for='counter'>Počet záznamů:</label>";
-    echo        "<input type='text' id='counter' value = 0 style='width: 20px; text-align: center' disabled>";
+    echo        "<input type='text' id='counter' value = 0 style='width: 40px; text-align: center' disabled>";
     echo        "</div><br>";      
     echo        "<table id='BodyField' class='AddField'></table>";
    
     }
 
+/******************************************************************************************************************************************************************************/
 function Shop_Combo()
 {
 if (!isset($Connection)){$Connection = new PDOConnect("DPD_DB");}
